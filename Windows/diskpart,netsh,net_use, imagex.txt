@@ -1,0 +1,40 @@
+diskpart 
+
+list disk
+
+select disk 0
+
+clean
+
+create partition primary size=100
+
+select partition 1
+
+format quick fs=ntfs
+
+assign
+
+active
+
+create partition primary
+
+select partition 2
+
+format quick fs=ntfs label="os"
+
+assign
+
+active
+
+list volume
+
+netsh interface ip set address name="Local Area Connection 2" static 130.207.240.91 255.255.255.224 130.207.240.65 1
+
+(ipconfig & ping gateway)
+
+net use r:  \\130.207.240.81\d$ /user:ad\admfranklin7
+
+imagex /apply "r:\xen-gpd-101\xen-gpd-101.wim" 1 c: /verify
+
+
+imagex /apply "r:\Ghosts\Xen6 - IBM3550\xen6-IBMx3550.wim" 1 d: /verify

@@ -1,0 +1,31 @@
+The following example demonstrates how to create a group named groupadmins in the Fabrikam.com domain:
+      New-ADGroup -Name "RODC Admins" -SamAccountName groupadmins -GroupCategory Security -GroupScope Global 
+        -DisplayName "Group Administrators" -Path "CN=Users,DC=Fabrikam,DC=Com" 
+
+
+The following example demonstrates how to view the nested members of a group:
+      Get-ADGroupMember <groupname> -Recursive | FT <attributes to display> 
+      Get-ADGroupMember G1 -Recursive | FT Name,ObjectClass
+
+
+The following example shows how to view the group membership of a single user, SaraDavis (this is slow to run):
+    Get-ADPrincipalGroupMembership -Identity <user Account> 
+    Get-ADPrincipalGroupMembership -Identity SaraDavis 
+    Get-ADPrincipalGroupMembership SaraDavis | ft name, GroupCategory, GroupScope
+
+The following example demonstrates how to add the user SaraDavis to the group SvcGroup:
+      Add-ADGroupMember -Identity <groupname> -Member <User> 
+      Add-ADGroupMember -Identity SvcGroup -Member SaraDavis 
+
+
+The following example demonstrates how to remove the user SaraDavis from the group SvcGroup:
+      Remove-ADGroupMember -Identity <groupname> -Member <User> 
+      Remove-ADGroupMember -Identity SvcGroup -Member SaraDavis
+
+
+
+
+
+
+
+ 

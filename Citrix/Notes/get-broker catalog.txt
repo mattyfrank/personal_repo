@@ -1,0 +1,1 @@
+Get-BrokerCatalog | Format-Table -Property Name,UsedCount

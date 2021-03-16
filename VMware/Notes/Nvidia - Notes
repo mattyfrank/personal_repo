@@ -1,0 +1,21 @@
+locate existing nvidia software (host driver)- 
+ esxcli software vib list | grep NVIDIA
+
+##uninstall existing host driver - 
+ esxcli software vib remove -n NVIDIA-VMware_ESXi_6.7_Host_Driver
+ esxcli software vib remove -n NVIDIA-VMware_ESXi_6.5_Host_Driver
+
+Copy offline.zip to datastore with winscp
+
+#Install hose driver - 
+#ESX6.5_vGPU4.10 
+esxcli software vib install -d /vmfs/volumes/isilon-esxisos/nvidia/Nvidia_4_Series/NVIDIA-VMware_ESXi_6.5_Host_Driver_367.134-1OEM.650.0.0.4598673-offline_bundle.zip
+#ESX6.7_vGPU8.2
+esxcli software vib install -d /vmfs/volumes/isilon-esxisos/nvidia/Nvidia_8_Series/NVIDIA-VMware_ESXi_6.7_Host_Driver-418.109-1OEM.670.0.0.8169922-offline_bundle-14870396.zip
+
+#ESX6.7 8.4
+esxcli software vib install -d /vmfs/volumes/isilon-esxisos/nvidia/Nvidia_8_Series/8.4/NVD.NVIDIA_bootbank_NVIDIA-VMware_418.149-1OEM.670.0.0.8169922-offline_bundle-16336566.zip
+
+
+#ESX6.7 11.0
+esxcli software vib install -d /vmfs/volumes/96ecf719-de2615a0/nvidia/Nvidia_11_Series/NVD.NVIDIA_bootbank_NVIDIA-VMware_450.55-1OEM.670.0.0.8169922-offline_bundle.zip

@@ -1,0 +1,12 @@
+VDAWorkstationSetup_7.18.exe /controllers "bcdc-xd7-srv2.ad.gatech.edu bcdc-xd7-srv3.ad.gatech.edu" /quiet /enable_remote_assistance /components VDA /masterimage /virtualmachine /optimize /enable_hdx_3d_pro /enable_real_time_transport /enable_framehawk_port /enable_hdx_ports /enable_hdx_udp_ports /exclude "Citrix Personalization for App-V - VDA","Personal vDisk" 
+
+VDAWorkstationSetup_1808_2.exe /controllers "bcdc-xd7-srv2.ad.gatech.edu bcdc-xd7-srv3.ad.gatech.edu" /quiet /enable_remote_assistance /components VDA /masterimage /virtualmachine /optimize /enable_hdx_3d_pro /enable_real_time_transport /enable_framehawk_port /enable_hdx_ports /enable_hdx_udp_ports /exclude "Citrix Personalization for App-V - VDA","Personal vDisk","Citrix Files for Windows" 
+
+
+VDAWorkstationSetup_1903.exe /controllers "bcdc-xd7-srv2.ad.gatech.edu bcdc-xd7-srv3.ad.gatech.edu" /configure_firewall /quiet /components VDA /enable_hdx_ports /enable_hdx_udp_ports /enable_real_time_transport /enable_remote_assistance /exclude "AppDisks VDA Plug-in","Personal vDisk","Citrix Personalization for App-V - VDA","Citrix Files for Windows","Citrix Files for Outlook" /includeadditional "Citrix Telemetry Service","Citrix Supportability Tools","Smart Tools Agent" /install_mcsio_driver /masterimage /optimize /virtualmachine
+
+
+
+#Citrix COnfirmed - 
+VDAWorkstationSetup_1903.exe /controllers "bcdc-xd7-srv2.ad.gatech.edu bcdc-xd7-srv3.ad.gatech.edu" /configure_firewall /quiet /components VDA /enable_hdx_ports /enable_hdx_udp_ports /enable_real_time_transport /enable_remote_assistance /exclude "AppDisks VDA Plug-in","Personal vDisk","Citrix Personalization for App-V - VDA","Citrix Files for Windows","Citrix Files for Outlook" /includeadditional "Citrix Telemetry Service","Citrix Supportability Tools","Smart Tools Agent" /install_mcsio_driver /masterimage /optimize /virtualmachine
+

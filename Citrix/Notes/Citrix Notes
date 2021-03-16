@@ -1,0 +1,4 @@
+Get-BrokerDesktop -MaxRecordCount 5000 | Select-Object ClientName, AssociatedUserFullNames, MachineName, CatalogName |Where-object {$_.RegistrationState -eq 'Unregistered'} | Export-Csv UnregisteredVDAs.csv |Format-Table -AutoSize
+
+
+Get-BrokerDesktop -MaxRecordCount 10000 | Select-Object MachineName, AgentVersion, AssociatedUserFullNames, CatalogName | Sort-Object -Property AgentVersion | Export-Csv ListVDAs.csv |Format-Table -AutoSize

@@ -1,0 +1,26 @@
+# Get the OS CustomizationSpec and clone
+$OSCusSpec = Get-OSCustomizationSpec -Name 'Source' | New-OSCustomizationSpec -Name 'New-CustomSpec' -Type NonPersistent
+
+#Get updated Spec Object
+$OSCusSpec = Get-OSCustomizationSpec -Name 'New-CustomSpec'
+
+#Define Parameters
+$Template = Get-Template -Name 'Win10-1909-MDT'
+$DiskSize=128
+$Memory=8
+$NumCPU=2
+$Network='COE-6.5-1364-Non-Persistent'
+
+#Get Cluster
+$tgtClusterName = 'Non-GPU 6.5'
+$cluster = Get-Cluster -Name $tgtClusterName
+
+# Get a host within cluster
+$VMHost = Get-Cluster $cluster | Get-VMHost | Get-Random
+
+# Get datastore
+$dsName = 'rascasse1-vlab-sas1'
+
+# Deploy Virtual Machine and remove temp custom spec
+$VM = New-VM -Name 'NEW-VM-NAME' -Template $Template -VMHost $VMHost -Datastore $Datastore -OSCustomizationSpec $OSCusSpec -DiskGB $DiskSize -MemoryGB $Memory -NumCpu $NumCPU -NetworkName $Network | Start-VM
+Remove-OSCustomizationSpec $OSCusSpec -Confirm

@@ -1,0 +1,4 @@
+foreach ($module in (Get-Module -ListAvailable Az*).Name |Get-Unique) {
+   write-host "Removing Module $module"
+   Uninstall-module $module
+}

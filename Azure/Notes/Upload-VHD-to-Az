@@ -1,0 +1,28 @@
+# Provide values for the variables
+$resourceGroup = 'OITCloudbolt-NetworkCore-EastUS'
+$location = 'EastUS'
+$storageaccount = 'oitcloudbolt'
+$storageType = 'Standard_LRS'
+$containername = 'cb-dev'
+$localPath = 'C:\Images\_Server2016_DataCenter.vhd'
+$vhdName = '_Server2016_DataCenter.vhd'
+
+ 
+
+
+# Get the username and password to be used for the administrators account on the VM. 
+# This is used when connecting to the VM using RDP.
+
+ 
+
+$cred = Get-Credential
+
+ 
+
+# Upload the VHD
+New-AzResourceGroup -Name $resourceGroup -Location $location
+New-AzStorageAccount -ResourceGroupName $resourceGroup -Name $storageAccount -Location $location `
+    -SkuName $storageType -Kind "Storage"
+$urlOfUploadedImageVhd = ('https://' + $storageaccount + '.blob.core.windows.net/' + $containername + '/' + $vhdName)
+Add-AzVhd -ResourceGroupName $resourceGroup -Destination $urlOfUploadedImageVhd `
+    -LocalFilePath $localPath

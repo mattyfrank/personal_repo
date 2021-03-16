@@ -1,0 +1,40 @@
+Example to show default user attributes
+    get-aduser <user account>
+    get-aduser test
+
+
+Example to show all user attributes
+    get-aduser <user account> -Properties *
+    get-aduser test -Properties *
+
+
+The following example shows how to view the group membership of the user SaraDavis (this is slow to run):
+    Get-ADPrincipalGroupMembership -Identity <user Account> 
+    Get-ADPrincipalGroupMembership -Identity SaraDavis 
+    Get-ADPrincipalGroupMembership SaraDavis | ft name, GroupCategory, GroupScope
+
+
+The following example shows how to find inactive user accounts in an OU:
+    Search-ADAccount -AccountInactive -SearchBase <OU to search> | where {$_.ObjectClass -eq 'user'} | FT Name,ObjectClass
+    Search-ADAccount -AccountInactive -SearchBase  "OU=_testou,DC=ad,DC=gatech,DC=edu" | where {$_.ObjectClass -eq 'user'} | FT Name,DistinguishedName,LastLogonDate
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 

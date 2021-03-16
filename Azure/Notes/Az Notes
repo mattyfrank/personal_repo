@@ -1,0 +1,32 @@
+###AZ Notes####
+
+Install Powershell 
+
+Install-Module -Name Az -AllowClobber -Scope CurrentUser
+#Answer Yes or Yes to All to continue with the installation
+
+#go to web page and provide the unique code. 
+Connect-AzAccount
+
+
+#Locate the subscription you want to work within. 
+Get-AzSubscription
+#Example-
+#Name                            Id                        
+#Campus Production     c1835977-39e7-4415-a092-a77866f5afb8 
+Set-AzContext -SubscriptionId “ID”
+
+#Locate Resource Group 
+Get-AzResourceGroup 
+Get-AzResourceGroup  -Name “NAME”
+
+#Get-VM
+Get-AzVM (Lists all VMs under the SubID)
+Get-AzResourceGroup -Name “”ResourceGroupName” | Get-AzVM -Name *
+
+#Get-VM Properties 
+Get-AzVM -Name ‘NAMEofVM’ | Select-Object *
+
+
+
+

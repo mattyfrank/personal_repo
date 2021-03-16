@@ -1,0 +1,1 @@
+imagex.exe /capture c: r:\ghosts\ctx-xseries346\image1.3.wim imagex1.3

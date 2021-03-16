@@ -1,0 +1,12 @@
+#PShell To Create Computer Object
+
+$MasterImageName="SchoolName-Year-IMG"
+$OUName="Year"
+$OUPath="OU=OIT,OU=VDI,OU=Workstations,OU=_XEN,DC=ad,DC=gatech,DC=edu"
+
+New-ADOrganizationalUnit -Name $OUName -Path $OUPath
+New-ADComputer -Name $MasterImageName -SamAccountName $MasterImageName -Path $OUPath
+
+#Create new UPM Directory 
+New-Item -Path "FileSystem::\\nas2-upm.matrix.gatech.edu\vlab_upm1\New_Directory" -ItemType Directory
+

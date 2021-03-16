@@ -1,0 +1,15 @@
+#Verify the variable exists
+If(!(Test-Path $variablepath)){
+    Write-Output "$variablepath does not exist, creating it now..."
+    New-Item $variablepath 
+}
+
+
+foreach ($element in $vcenter) {
+	Connect-VIServer -server $element -User $UserName -Password $Password | out-null
+    If (!($?)) {
+        Throw "Cannot Connect To VI Server"
+        Stop-Transcript
+        Exit
+    }
+    Write-Output "Connection to $element successful"

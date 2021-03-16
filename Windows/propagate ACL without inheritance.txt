@@ -1,0 +1,1 @@
+T:\>ICACLS t:\ai /grant "ad\_oitfs-a&i-associate director_oit file server_customer roles-b1e":(OI)(CI)(f) /t

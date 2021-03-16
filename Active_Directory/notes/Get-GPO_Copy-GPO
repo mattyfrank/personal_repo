@@ -1,0 +1,12 @@
+Copy-GPO -SourceName "TestGpo1" -TargetName "TestGpo2"
+
+Set-GPLink -Name TestGPO -Target "ou=MyOU,dc=contoso,dc=com" -LinkEnabled Yes
+
+
+
+
+
+$NewGPOName=whatever
+$TargetOU=whatever
+Copy-GPO -SourceName "XEN-FSLOGIX-Win10-BCDC" -TargetName $NewGPOName
+Set-GPLink -Name $NewGPOName -Target  $TargetOU -LinkEnabled Yes

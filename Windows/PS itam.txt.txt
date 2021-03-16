@@ -1,0 +1,5 @@
+Set-ExecutionPolicy remotesigned
+
+Import-Module itam
+
+get-itam <hostname>

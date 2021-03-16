@@ -1,0 +1,4 @@
+netstat -ano 1 | findstr SYN
+
+
+Use this command to watch connections establish and drop

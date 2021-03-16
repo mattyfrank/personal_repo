@@ -1,0 +1,5 @@
+Set-Item WSMan:\localhost\Client\TrustedHosts "130.207.252.238, 130.207.252.234”
+y
+winrm get winrm/config/client
+
+Set-PSSessionConfiguration Microsoft.PowerShell -ShowSecurityDescriptorUI -force 

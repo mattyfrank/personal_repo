@@ -1,0 +1,72 @@
+#Prereqs:
+# Must have a SPN created
+# SPN must have Contributor or 'Microsoft.Storage/storageAccounts/write' access to the ResourceGroup where the Storage Account lives
+# SPN must have Azure Active Directory Graph - Directory.Read.All and Group.Rread.All privs, assigned via delegated API permissions on the SPN
+# Powershell ISE usage requires Module AzTable and Install-Module -Name AzureTableEntity
+
+# ##########################################################################
+
+#Params
+$wvdTenantName = "ACS-WVD-Demo" #RDS Tenant Name
+$wvdAppHostPoolName = "ACS-WVD-App-Pool" #Host Pool Name
+$wvdAppGroupName = "WVD-Preamble" # "Desktop Application Group"  #App or Desktop Group Name - Default Value for Desktop is #Desktop Application Group#
+$adGroupname = "WVD-Preamble" #Azure AD Group Object ID to Sync From
+$adTenant = "43d92aa1-02a9-4639-9f45-992a257cd11f" #Azure AD Tenant 
+$applicationId = "b117b92a-30d5-4851-a257-8bba848786c8" 
+$certificateThumbprint = "759FC5F65154A1D45C37EB825161C8BDD77C47C5" #also obtained from the Portal
+       
+#Storage Account Location Information
+$subscriptionID = "6bae3344-df7a-4632-ae83-c063147dfce2"
+$resourceGroup = "ResizeVMsRG"
+$location = "EastUS"
+$storageAccountName = "wvdstorageac1"
+$storageAccountTableName = "wvdsynctable" 
+
+# Connect to Azure AD
+Connect-AzureAD -TenantId $adTenant  -ApplicationId  $applicationId -CertificateThumbprint $certificateThumbprint
+
+#Connect to RDS Broker
+Add-RdsAccount -DeploymentUrl "https://rdbroker.wvd.microsoft.com" -CertificateThumbprint $certificateThumbprint -ApplicationId $applicationId -AadTenantId $ADTenant
+
+#Connect to Azure
+Connect-AzAccount -Tenant $adTenant -ServicePrincipal -CertificateThumbprint $certificateThumbprint -ApplicationId $applicationId -Subscription $subscriptionID
+Set-AzContext -Subscription $subscriptionID -Tenant $adTenant
+
+$storageKey = Prepare-Storage
+
+#Get AD Security group & members
+$adGroup = Get-AzureADGroup -SearchString $adGroupname 
+$hostPoolMembers = Get-RdsAppGroupUser -TenantName $wvdTenantName -HostPoolName $wvdAppHostPoolName -AppGroupName $wvdAppGroupName
+
+$adUsers = Get-Users $adGroup.ObjectId | Sort-Object | Get-Unique
+
+#Remove members in the list from WVD HostPoolMembers if user NOT in AD User List
+foreach ($member in $hostPoolMembers)
+{
+   if ($adUsers.UserPrincipalName -notcontains $member.UserPrincipalName)
+   {
+      Write-Output ("Removing " + $member.UserPrincipalName)
+      Remove-RdsAppGroupUser -TenantName $wvdTenantName -HostPoolName $wvdAppHostPoolName -AppGroupName $wvdAppGroupName -UserPrincipalName $member.UserPrincipalName
+      Log-Action -upn $member.UserPrincipalName -action "Remove" -hostPoolName $wvdAppHostPoolName -partionKey "WVDUserSync"
+   }
+}
+
+#Add Members in the AD User List that are NOT members of the WVD HostPool
+foreach ($user in $adUsers.UserPrincipalName)
+{
+   if ($hostPoolMembers.UserPrincipalName -notcontains $user)
+   {
+      Write-Output ("Adding " + $User)
+      Add-RdsAppGroupUser -TenantName $wvdTenantName -HostPoolName $wvdAppHostPoolName -AppGroupName $wvdAppGroupName -UserPrincipalName $user
+      Log-Action -upn $user -action "Add" -hostPoolName $wvdAppHostPoolName -partionKey "WVDUserSync"
+   }
+}
+
+#Sample on how to query results of log in Table Storage - This should remain commented out for normal RunBook usage
+# $querystring = "(PartitionKey eq 'WVDUserSync')"
+# $result = Get-AzureTableEntity -TableName $storageAccountTableName -StorageAccountName $storageAccountName -StorageAccountAccessKey $storageKey -QueryString $querystring -ConvertDateTimeFields $true -GetAll $true -Verbose
+# $result.Count
+# $result | Group-Object Location
+# $result
+
+   Write-Host "Done..."

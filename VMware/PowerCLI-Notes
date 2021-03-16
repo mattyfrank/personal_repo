@@ -1,0 +1,65 @@
+#Restart ESX Services - 
+/etc/init.d/hostd restart
+/etc/init.d/vpxa restart
+#start & #status
+
+#Restart all MGMT Agents
+services.sh restart
+
+#Snapshot from ESX Console
+vim-cmd vmsvc/getallvms |grep <VM Name>
+
+vim-cmd vmsvc/snapshot.create <VMID>  MemDump_Snapshot true true 
+
+#Syntax example
+vmware-cmd createsnapshot "SnapshotName" "SnapshotDescription" QuiesceFilesystem IncludeMemory
+
+
+#Inventory Vcenter
+#VM Name, Power State, CPU, Memoery, IP address, Used/Consumed Space, Configured OS, Running OS
+Get-VM | Select Name,PowerState,NumCpu,MemoryGB,@{N="IP";E={@($_.Guest.IPAddress)}},UsedSpaceGB,@{n="HardDiskSizeGB"; e={(Get-HardDisk -VM $_ | Measure-Object -Sum CapacityGB).Sum}},@{N="Configured OS";E={$_.Config.GuestFullName}},@{N="Running OS";E={$_.Guest.GuestFullName}}
+
+#powerstate?
+@{N="PowerState";E={$_.Runtime.PowerState}}
+
+#Guest Tools Version
+@{ Name=”ToolsStatus”; Expression={$_.guest.toolsStatus}}
+
+#get MacAddress
+Get-VM | Get-NetworkAdapter | select MacAddress
+Get-VM | Get-NetworkAdapter | select -ExpandProperty MacAddress
+
+#get-snapshot
+get-snapshot -vm *
+
+#list snapshots, and size. 
+Get-VM | Get-Snapshot | Select VM,Name,sizegb |Out-GridView
+
+
+#get win2008 VMs
+Get-vm | where {$_.ExtensionData.Guest.GuestFullName -like "*2008*"} 
+Get-vm | where {$_.ExtensionData.Guest.GuestFullName -like "*7*"} 
+
+#Update Out of Date VMware Tools
+$ListofVMs = Get-VM | % { get-view $_.id } |Where-Object {$_.Guest.ToolsVersion -like "10336"} |select name, @{Name=“ToolsVersion”; Expression={$_.config.tools.toolsversion}}, @{ Name=“ToolStatus”; Expression={$_.Guest.ToolsVersionStatus}}
+ForEach ($VM in $ListofVMs){Update-Tools -NoReboot -VM $VM.Name -Verbose}
+
+
+$OutofDateVMs = Get-Folder -name Testing | Get-VM | % { get-view $_.id } |Where-Object {$_.Guest.ToolsVersionStatus -like "guestToolsNeedUpgrade"} |select name, @{Name=“ToolsVersion”; Expression={$_.config.tools.toolsversion}}, @{ Name=“ToolStatus”; Expression={$_.Guest.ToolsVersionStatus}}
+ForEach ($VM in $OutOfDateVMs){Update-Tools -NoReboot -VM $VM.Name -Verbose}
+
+
+###########################################
+#Get VM Powered ON and OLD VMware Tools. 
+$PoweredOffvms = Get-VM | where {$_.PowerState -eq "PoweredOff"}
+$PoweredONvms = Get-VM | where {$_.PowerState -eq "PoweredON"} 
+$MicrosoftVMs= Get-VM | Where{$_.Guest.OSFullName -match 'Microsoft'}
+$VMtoolsOutOfDate= Get-VM | % { get-view $_.id } |Where-Object {$_.Guest.ToolsVersionStatus -like "guestToolsNeedUpgrade"}
+
+$WinVM=Get-VM | where {$_.PowerState -eq "PoweredON" -and $_.Guest.OSFullName -match 'Microsoft'} | % { get-view $_.id } |Where-Object {$_.Guest.ToolsVersionStatus -like "guestToolsNeedUpgrade"} | Select Name, @{Name=“ToolsVersion”; Expression={$_.config.tools.toolsversion}},@{ Name=“ToolStatus”; Expression={$_.Guest.ToolsVersionStatus}},@{N="PowerState";E={$_.Runtime.PowerState}}| export-csv Microsoft-VMs.CSV
+
+ForEach ($VM in $WinVM){
+Write-Output "Updating VM Tools"
+Write-Output ($VM | select name, @{Name=“ToolsVersion”; Expression={$_.config.tools.toolsversion}})
+Update-Tools -NoReboot -VM $VM.Name -Verbose
+}
